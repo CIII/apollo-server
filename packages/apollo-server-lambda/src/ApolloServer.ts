@@ -19,6 +19,7 @@ import {
   IncomingHttpHeaders,
   IncomingMessage,
 } from 'http';
+import { lambda } from '@pulumi/aws';
 
 import { graphqlLambda } from './lambdaApollo';
 import { Headers } from 'apollo-server-env';
@@ -113,9 +114,20 @@ export class ApolloServer extends ApolloServerBase {
 
     return (
       event: APIGatewayProxyEvent,
-      context: LambdaContext,
+      pulumiContext: lambda.Context,
       callback: APIGatewayProxyCallback,
     ) => {
+
+      const context: AWSLambda.Context = {
+        done() { throw new Error("done is just a placeholder ") },
+        fail() { throw new Error("fail is just a placeholder ") },
+        succeed() { throw new Error("succeed is just a placeholder ") },
+        ...pulumiContext,
+        getRemainingTimeInMillis: () =>
+          parseInt(pulumiContext.getRemainingTimeInMillis(), 10),
+        memoryLimitInMB: parseInt(pulumiContext.memoryLimitInMB, 10).toString(),
+      };
+
       // We re-load the headers into a Fetch API-compatible `Headers`
       // interface within `graphqlLambda`, but we still need to respect the
       // case-insensitivity within this logic here, so we'll need to do it
