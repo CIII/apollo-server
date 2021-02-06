@@ -2,6 +2,7 @@
   "name": "apollo-server-monorepo",
   "private": true,
   "license": "MIT",
+  "version": "1.0",
   "repository": "github:apollographql/apollo-server",
   "scripts": {
     "clean": "git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo",
